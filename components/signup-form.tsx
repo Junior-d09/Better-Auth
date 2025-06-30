@@ -22,7 +22,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 
-import { signIn } from "@/server/user";
+import {  signUp } from "@/server/user";
 
 import { z } from "zod";
 import { toast } from "sonner";
@@ -32,11 +32,12 @@ import { Loader2 } from "lucide-react";
 import { authClient } from "@/lib/auth-client";
 
 const formSchema = z.object({
+  username: z.string().min(3),  
   email: z.string().email(),
   password: z.string().min(8),
 });
 
-export function LoginForm({
+export function SignupForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
@@ -60,7 +61,7 @@ export function LoginForm({
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
-    const { success, message } = await signIn(values.email, values.password);
+    const { success, message } = await signUp(values.email, values.password, values.username);
 
     if (success) {
       toast.success(message as string);
@@ -103,6 +104,20 @@ export function LoginForm({
                 </div>
                 <div className="grid gap-6">
                   <div className="grid gap-3">
+                     <FormField
+                      control={form.control}
+                      name="username"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Username</FormLabel>
+                          <FormControl>
+                            <Input placeholder="shadcn" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />  
+
                     <FormField
                       control={form.control}
                       name="email"
